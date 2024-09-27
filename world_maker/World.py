@@ -29,8 +29,10 @@ class World:
         editor = Editor(buffering=True)
         buildArea = editor.getBuildArea()
 
-        self.coordinates_min = [min(buildArea.begin[i], buildArea.last[i]) for i in range(3)]
-        self.coordinates_max = [max(buildArea.begin[i], buildArea.last[i]) for i in range(3)]
+        self.coordinates_min = [
+            min(buildArea.begin[i], buildArea.last[i]) for i in range(3)]
+        self.coordinates_max = [
+            max(buildArea.begin[i], buildArea.last[i]) for i in range(3)]
 
         self.length_x = self.coordinates_max[0] - self.coordinates_min[0] + 1
         self.length_y = self.coordinates_max[1] - self.coordinates_min[1] + 1
@@ -62,7 +64,8 @@ class World:
         Add block or list of block to the volume.
         """
 
-        self.volume[volumeCoordinates[0]][volumeCoordinates[1]][volumeCoordinates[2]] = None
+        self.volume[volumeCoordinates[0]][volumeCoordinates[1]
+                                          ][volumeCoordinates[2]] = None
 
     def getBlockFromCoordinates(self, coordinates):
         """
@@ -71,7 +74,7 @@ class World:
 
         editor = Editor(buffering=True)
         if self.volume[coordinates[0] - self.coordinates_min[0]][coordinates[1] - self.coordinates_min[1]][
-            coordinates[2] - self.coordinates_min[2]] == None:
+                coordinates[2] - self.coordinates_min[2]] == None:
             self.volume[coordinates[0] - self.coordinates_min[0]][coordinates[1] - self.coordinates_min[1]][
                 coordinates[2] - self.coordinates_min[2]] = Block((coordinates[0], coordinates[1], coordinates[2]),
                                                                   editor.getBlock((coordinates[0], coordinates[1],
@@ -85,9 +88,11 @@ class World:
             for j in range(-1, 2):
                 for k in range(-1, 2):
                     if not (i == 0 and j == 0 and k == 0):
-                        coordinates = (Block.coordinates[0] + i, Block.coordinates[1] + j, Block.coordinates[2] + k)
+                        coordinates = (
+                            Block.coordinates[0] + i, Block.coordinates[1] + j, Block.coordinates[2] + k)
                         if self.isInVolume(coordinates):
-                            Block.addNeighbors([self.getBlockFromCoordinates(coordinates)])
+                            Block.addNeighbors(
+                                [self.getBlockFromCoordinates(coordinates)])
 
     def setVolume(self):
         """
@@ -99,7 +104,8 @@ class World:
         for x in range(self.coordinates_min[0], self.coordinates_max[0] + 1):
             for y in range(self.coordinates_min[1], self.coordinates_max[1] + 1):
                 for z in range(self.coordinates_min[2], self.coordinates_max[2] + 1):
-                    self.addBlocks([Block((x, y, z), editor.getBlock((x, y, z)).id)])
+                    self.addBlocks(
+                        [Block((x, y, z), editor.getBlock((x, y, z)).id)])
 
     def getData(self):
         """
@@ -120,8 +126,10 @@ class World:
 
         slice = editor.loadWorldSlice(buildRect)
 
-        heightmapData = list(np.array(slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"], dtype=np.uint8))
-        treesmapData = list(np.array(slice.heightmaps["MOTION_BLOCKING"], dtype=np.uint8))
+        heightmapData = list(
+            np.array(slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"], dtype=np.uint16))
+        treesmapData = list(
+            np.array(slice.heightmaps["MOTION_BLOCKING"], dtype=np.uint16))
 
         for x in range(0, xzDistance[0]):
             for z in range(0, xzDistance[1]):
@@ -148,7 +156,8 @@ class World:
 
                                     # print('getData for tree', xzStart[0] + x + i, k, xzStart[1] + z + j)
 
-                                    blockNeighbor = slice.getBlock((x + i, k, z + j))
+                                    blockNeighbor = slice.getBlock(
+                                        (x + i, k, z + j))
                                     if blockNeighbor.id not in lookup.TREES:
                                         height += k
                                         number += 1
@@ -162,7 +171,9 @@ class World:
                 else:
                     watermap.putpixel((x, z), 0)
 
-                self.addBlocks([Block((xzStart[0] + x, 100, xzStart[1] + z), block)])  # y set to 100 for 2D
+                # y set to 100 for 2D
+                self.addBlocks(
+                    [Block((xzStart[0] + x, 100, xzStart[1] + z), block)])
 
         return heightmap, watermap, treesmap
 
@@ -213,7 +224,8 @@ class World:
 
         slice = editor.loadWorldSlice(buildRect)
 
-        heightmapData = list(np.array(slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"], dtype=np.uint8))
+        heightmapData = list(
+            np.array(slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"], dtype=np.uint8))
 
         for x in range(0, xzDistance[0]):
             for z in range(0, xzDistance[1]):
