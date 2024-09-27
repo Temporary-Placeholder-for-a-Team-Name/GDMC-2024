@@ -31,11 +31,8 @@ def remove_trees(heightmap: Union[str, Image], treesmap: Union[str, Image], mask
         if mask.getpixel((x, z)) != 0 and treesmap.getpixel((x, z)) > 0:
 
             tree_area = morphology.flood(treesmap, (z, x), tolerance=1)
-            blend = img.blend(img.fromarray(tree_area).convert(
-                'L'), removed_treesmap.convert('L'), 0.5)
-            array = np.array(blend.convert('L'))
-            bool_array = array > 1
-            removed_treesmap = img.fromarray(bool_array)
+            removed_treesmap = img.fromarray(
+                np.where(tree_area, treesmap, 0).astype(np.uint8))
 
             y = heightmap.getpixel((x, z))
             y_top = removed_treesmap.getpixel((x, z))
