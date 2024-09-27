@@ -4,7 +4,8 @@ from typing import List, Union
 
 import numpy as np
 from gdpc import Editor
-from PIL import Image, ImageDraw
+from PIL.Image import Image
+from PIL import Image as img, ImageDraw
 from skan.csr import skeleton_to_csgraph
 from skimage.morphology import skeletonize
 from networks.geometry.Point3D import Point3D
@@ -12,7 +13,7 @@ from networks.geometry.Point3D import Point3D
 
 def handle_import_image(image: Union[str, Image]) -> Image:
     if isinstance(image, str):
-        return Image.open(image)
+        return img.open(image)
     return image
 
 
@@ -203,7 +204,7 @@ class Skeleton:
         # xzDistance = (max(buildRect.end[0], buildRect.begin[0]) - min(buildRect.end[0], buildRect.begin[0]),
         #              max(buildRect.end[1], buildRect.begin[1]) - min(buildRect.end[1], buildRect.begin[1]))
 
-        heightmap = Image.open(
+        heightmap = img.open(
             "./world_maker/data/heightmap.png").convert('RGB')
         # roadsArea = Image.new("L", xzDistance, 0)
         # width, height = heightmap.size
@@ -264,9 +265,9 @@ class Skeleton:
 
     def road_area(self, name: str, radius: int = 10) -> Image:
         print("[Skeleton] Start mapping the road area...")
-        heightmap = Image.open("./world_maker/data/heightmap.png")
+        heightmap = img.open("./world_maker/data/heightmap.png")
         width, height = heightmap.size
-        road_area_map = Image.new("L", (width, height), 0)
+        road_area_map = img.new("L", (width, height), 0)
         road_area_map_draw = ImageDraw.Draw(road_area_map)
 
         # Lines

@@ -15,7 +15,8 @@ from networks.geometry.Point3D import Point3D
 from networks.geometry.Point2D import Point2D
 from networks.geometry.Circle import Circle
 
-from PIL import Image
+from PIL import Image as img
+from PIL.Image import Image
 from utils.JsonReader import JsonReader
 from utils.YamlReader import YamlReader
 from buildings.Building import Building
@@ -44,6 +45,7 @@ def main():
     time_remove_tree = time.time() - start_time
     print(f"[TIME] Remove tree {time_remove_tree}")
 
+    """
     start_time = time.time()
     smooth_terrain('./world_maker/data/heightmap.png',
                    './world_maker/data/heightmap_smooth.png', './world_maker/data/smooth_sobel_watermap.png')
@@ -117,17 +119,17 @@ def main():
                       entranceDirection[random.randint(0, 3)], blocks)
         house.build()
     time_houses = time.time() - start_time
-    print(f"[TIME] Houses {time_houses}")
+    print(f"[TIME] Houses {time_houses}") """
 
     print("[GDMC] Done!\n\n")
 
     print(f"[TIME] Total {time.time() - start_time_all}")
     print(f"[TIME] World_maker {time_world_maker}")
     print(f"[TIME] Remove tree {time_remove_tree}")
-    print(f"[TIME] Smooth terrain {time_smooth_terrain}")
-    print(f"[TIME] Roads {time_roads}")
-    print(f"[TIME] Buildings {time_buildings}")
-    print(f"[TIME] Houses {time_houses}")
+    #print(f"[TIME] Smooth terrain {time_smooth_terrain}")
+    #print(f"[TIME] Roads {time_roads}")
+    #print(f"[TIME] Buildings {time_buildings}")
+    #print(f"[TIME] Houses {time_houses}")
 
 
 def get_height_building_from_center(center, position, length_world):
@@ -162,7 +164,7 @@ def set_roads(skeleton: Skeleton, origin):
         for j in range(len(skeleton.lines[i])):
             xyz = transpose_form_heightmap('./world_maker/data/heightmap.png',
                                            skeleton.coordinates[skeleton.lines[i][j]], origin)
-            heightmap_smooth = Image.open(
+            heightmap_smooth = img.open(
                 './world_maker/data/road_heightmap.png')
             skeleton.lines[i][j] = [xyz[0], heightmap_smooth.getpixel(
                 (skeleton.coordinates[skeleton.lines[i][j]][0], skeleton.coordinates[skeleton.lines[i][j]][-1])), xyz[2]]
