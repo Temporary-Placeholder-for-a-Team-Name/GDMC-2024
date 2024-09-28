@@ -26,18 +26,18 @@ class House:
 
         self.entranceCo = None
 
-        self.wall = Block(list_block["wall"])
-        self.roof = Block(list_block["roof"])
-        self.roof_slab = Block(list_block["roof_slab"])
-        self.door = Block(list_block["door"])
-        self.window = Block(list_block["window"])
-        self.entrance = Block(list_block["entrance"])
-        self.stairs = Block(list_block["stairs"])
-        self.celling = Block(list_block["celling"])
-        self.floor = Block(list_block["floor"])
-        self.celling_slab = Block(list_block["celling_slab"])
+        self.wall          = Block(list_block["wall"])
+        self.roof          = Block(list_block["roof"])
+        self.roof_slab     = Block(list_block["roof_slab"])
+        self.door          = Block(list_block["door"])
+        self.window        = Block(list_block["window"])
+        self.entrance      = Block(list_block["entrance"])
+        self.stairs        = Block(list_block["stairs"])
+        self.celling       = Block(list_block["celling"])
+        self.floor         = Block(list_block["floor"])
+        self.celling_slab  = Block(list_block["celling_slab"])
         self.gardenOutline = Block(list_block["garden_outline"])
-        self.garden_floor = Block(list_block["garden_floor"])
+        self.garden_floor  = Block(list_block["garden_floor"])
 
     def createHouseSkeleton(self):
         self.delete()
@@ -49,26 +49,26 @@ class House:
 
         x_min += 1
         z_min += 1
-        x_max -= 1
-        z_max -= 1
-        if x_min + 1 > x_max - 1:
-            x = np.random.randint(x_max - 1, x_min + 1)
+        x_max -= 2
+        z_max -= 2
+        if x_min + 1 > x_max :
+            x = np.random.randint(x_max, x_min + 1)
         else:
-            x = np.random.randint(x_min + 1, x_max - 1)
+            x = np.random.randint(x_min + 1, x_max)
 
-        if z_min + 1 > z_max - 1:
-            z = np.random.randint(z_max - 1, z_min + 1)
+        if z_min + 1 > z_max:
+            z = np.random.randint(z_max, z_min + 1)
         else:
-            z = np.random.randint(z_min + 1, z_max - 1)
+            z = np.random.randint(z_min + 1, z_max)
 
         width = perimeter_width // 2
         depth = perimeter_depth // 2
         height = y_max - y_min
 
-        if x + width - 1 > x_max - 1:
-            x = x_max - width - 1
-        if z + depth - 1 > z_max - 1:
-            z = z_max - depth - 1
+        if x + width - 1 > x_max:
+            x = x_max - width
+        if z + depth - 1 > z_max:
+            z = z_max - depth
 
         x_plan3d = x - x_min
         z_plan3d = z - z_min
@@ -104,19 +104,19 @@ class House:
                 else:
                     new_width = np.random.randint(width - 2, 5)
 
-                if max(x_min+1, x-new_width) > min(x_max-new_width-1, x+width):
+                if max(x_min+1, x-new_width) > min(x_max-new_width, x+width):
                     new_x = np.random.randint(
-                        min(x_max - new_width - 1, x + width), max(x_min + 1, x - new_width))
+                        min(x_max - new_width, x + width), max(x_min + 1, x - new_width))
                 else:
                     new_x = np.random.randint(
-                        max(x_min + 1, x - new_width), min(x_max - new_width - 1, x + width))
+                        max(x_min + 1, x - new_width), min(x_max - new_width, x + width))
 
-                if max(z_min+1, z-new_depth) > min(z_max-new_depth-1, z+depth):
+                if max(z_min+1, z-new_depth) > min(z_max-new_depth, z+depth):
                     new_z = np.random.randint(
-                        min(z_max - new_depth - 1, z + depth), max(z_min + 1, z - new_depth))
+                        min(z_max - new_depth, z + depth), max(z_min + 1, z - new_depth))
                 else:
                     new_z = np.random.randint(
-                        max(z_min + 1, z - new_depth), min(z_max - new_depth - 1, z + depth))
+                        max(z_min + 1, z - new_depth), min(z_max - new_depth, z + depth))
 
                 new_x_plan3d = new_x - x_min - 1
                 new_z_plan3d = new_z - z_min + 1
