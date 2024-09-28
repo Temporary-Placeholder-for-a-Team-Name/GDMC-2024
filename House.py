@@ -76,7 +76,6 @@ class House:
         z_plan3d = z - z_min
 
         geometry.placeCuboid(self.editor, (x, y_min, z), (x + width - 1, y_min, z + depth - 1), self.floor)
-        
         x_range = slice(x_plan3d, x_plan3d + width - 1)
         z_range = slice(z_plan3d, z_plan3d + depth - 1)
         self.grid3d[x_range, 0, z_range] = True, 1
@@ -109,53 +108,48 @@ class House:
                     new_width = np.random.randint(width - 2, 5)
 
                 if max(x_min+1, x-new_width) > min(x_max-new_width, x+width):
-                    new_x = np.random.randint(
-                        min(x_max - new_width, x + width), max(x_min + 1, x - new_width))
+                    new_x = np.random.randint(min(x_max - new_width, x + width), 
+                                              max(x_min + 1, x - new_width))
                 else:
-                    new_x = np.random.randint(
-                        max(x_min + 1, x - new_width), min(x_max - new_width, x + width))
+                    new_x = np.random.randint(max(x_min + 1, x - new_width), 
+                                              min(x_max - new_width, x + width))
 
                 if max(z_min+1, z-new_depth) > min(z_max-new_depth, z+depth):
-                    new_z = np.random.randint(
-                        min(z_max - new_depth, z + depth), max(z_min + 1, z - new_depth))
+                    new_z = np.random.randint(min(z_max - new_depth, z + depth), 
+                                              max(z_min + 1, z - new_depth))
                 else:
-                    new_z = np.random.randint(
-                        max(z_min + 1, z - new_depth), min(z_max - new_depth, z + depth))
+                    new_z = np.random.randint(max(z_min + 1, z - new_depth), 
+                                              min(z_max - new_depth, z + depth))
 
                 new_x_plan3d = new_x - x_min - 1
                 new_z_plan3d = new_z - z_min + 1
 
                 adjacent_blocks = 0
-                for i in range(new_x_plan3d, new_x_plan3d + new_width):
-                    for j in range(new_z_plan3d, new_z_plan3d + new_depth):
-                        if self.grid3d[i - 1, 0, j]['bool'] and self.grid3d[i - 1, 0, j]['int'] == 1 or \
-                                self.grid3d[i + 1, 0, j]['bool'] and self.grid3d[i + 1, 0, j]['int'] == 1 or \
-                                self.grid3d[i, 0, j - 1]['bool'] and self.grid3d[i, 0, j - 1]['int'] == 1 or \
-                                self.grid3d[i, 0, j + 1]['bool'] and self.grid3d[i, 0, j + 1]['int'] == 1:
+                for i in range(new_x_plan3d, new_x_plan3d + new_width) :
+                    for j in range(new_z_plan3d, new_z_plan3d + new_depth) :
+                        if self.grid3d[     i - 1, 0, j    ]['bool'] and self.grid3d[i - 1, 0, j    ]['int'] == 1 or \
+                                self.grid3d[i + 1, 0, j    ]['bool'] and self.grid3d[i + 1, 0, j    ]['int'] == 1 or \
+                                self.grid3d[i,     0, j - 1]['bool'] and self.grid3d[i,     0, j - 1]['int'] == 1 or \
+                                self.grid3d[i,     0, j + 1]['bool'] and self.grid3d[i,     0, j + 1]['int'] == 1:
                             adjacent_blocks += 1
 
-                if adjacent_blocks < 3:
+                new_x_range = slice(new_x_plan3d, new_x_plan3d + new_width)
+                new_z_range = slice(new_z_plan3d, new_z_plan3d + new_depth)
+                if adjacent_blocks < 3 or np.any(self.grid3d[new_x_range, 0, new_z_range]['bool']) :
                     continue
+                
+                new_x_plan3d += 1
+                new_z_plan3d -= 1
+                for i in range(0, new_width) :
+                    for j in range(0, new_depth) :
+                        self.grid3d[new_x_plan3d + i, 0, new_z_plan3d + j] = True, 2
 
-                if not np.any(
-                        self.grid3d[new_x_plan3d:new_x_plan3d + new_width, 0, new_z_plan3d:new_z_plan3d + new_depth][
-                            'bool']):
-                    new_x_plan3d = new_x - x_min
-                    new_z_plan3d = new_z - z_min
-                    for i in range(0, new_width):
-                        for j in range(0, new_depth):
-                            self.grid3d[new_x_plan3d + i, 0,
-                                        new_z_plan3d + j] = True, 2
+                        if 0 < i < new_width-1 and 0 < j < new_depth-1 :
+                            self.editor.placeBlock((new_x + i, y_min, new_z + j), self.floor)    
 
-                            if i == 0 or i == new_width - 1 or j == 0 or j == new_depth - 1:
-                                continue
-                            else:
-                                self.editor.placeBlock(
-                                    (new_x + i, y_min, new_z + j), self.floor)
-
-                    self.skeleton.append(
-                        (new_x, new_z, new_width, new_depth, height))
-                    break
+                self.skeleton.append((new_x, new_z, new_width, new_depth, height))
+                break
+                    
             else:
                 print("Failed to place rectangle after 100000 attempts.")
 
@@ -1251,6 +1245,7 @@ class House:
         self.placeGardenOutline()
         if self.nbEtage > 1:
             self.placeStairs()
+        
 
 
 if __name__ == "__main__":
