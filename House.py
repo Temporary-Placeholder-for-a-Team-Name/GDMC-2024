@@ -4,6 +4,8 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
+from pyxtension.streams import stream
+
 
 class House:
     def __init__(self, editor, coordinates_min, coordinates_max, direction, list_block):
@@ -73,10 +75,12 @@ class House:
         x_plan3d = x - x_min
         z_plan3d = z - z_min
 
-        for i in range(0, width - 1):
-            for j in range(0, depth - 1):
-                self.editor.placeBlock((x + i, y_min, z + j), self.floor)
-                self.grid3d[x_plan3d + i, 0, z_plan3d + j] = True, 1
+        geometry.placeCuboid(self.editor, (x, y_min, z), (x + width - 1, y_min, z + depth - 1), self.floor)
+        
+        x_range = slice(x_plan3d, x_plan3d + width - 1)
+        z_range = slice(z_plan3d, z_plan3d + depth - 1)
+        self.grid3d[x_range, 0, z_range] = True, 1
+        
         self.skeleton.append((x, z, width - 1, depth - 1, height))
         print("Coordinates of the corners: ", (x, z), (x, z + depth - 1), (x + width - 1, z),
               (x + width - 1, z + depth - 1))
