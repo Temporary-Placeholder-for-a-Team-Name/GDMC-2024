@@ -81,8 +81,8 @@ class House:
         self.grid3d[x_range, 0, z_range] = True, 1
         
         self.skeleton.append((x, z, width - 1, depth - 1, height))
-        print("Coordinates of the corners: ", (x, z), (x, z + depth - 1), (x + width - 1, z),
-              (x + width - 1, z + depth - 1))
+        print("Coordinates of the corners: ", (x, z), (x, z + depth - 1), 
+              (x + width - 1, z), (x + width - 1, z + depth - 1))
 
         x_min -= 1
         x_max -= 1
@@ -138,14 +138,12 @@ class House:
                 if adjacent_blocks < 3 or np.any(self.grid3d[new_x_range, 0, new_z_range]['bool']) :
                     continue
                 
+                geometry.placeCuboid(self.editor, (new_x, y_min, new_z), (new_x+new_width-1, y_min, new_z+new_depth-1), self.floor)
                 new_x_plan3d += 1
-                new_z_plan3d -= 1
-                for i in range(0, new_width) :
-                    for j in range(0, new_depth) :
-                        self.grid3d[new_x_plan3d + i, 0, new_z_plan3d + j] = True, 2
-
-                        if 0 < i < new_width-1 and 0 < j < new_depth-1 :
-                            self.editor.placeBlock((new_x + i, y_min, new_z + j), self.floor)    
+                new_z_plan3d -= 1 
+                new_x_range = slice(new_x_plan3d, new_x_plan3d + new_width)
+                new_z_range = slice(new_z_plan3d, new_z_plan3d + new_depth) 
+                self.grid3d[new_x_range, 0, new_z_range] = True, 2
 
                 self.skeleton.append((new_x, new_z, new_width, new_depth, height))
                 break
