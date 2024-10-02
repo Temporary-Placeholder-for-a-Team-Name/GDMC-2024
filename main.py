@@ -45,13 +45,14 @@ def main():
     time_remove_tree = time.time() - start_time
     print(f"[TIME] Remove tree {time_remove_tree}")
 
-    """
+    
     start_time = time.time()
     smooth_terrain('./world_maker/data/heightmap.png',
                    './world_maker/data/heightmap_smooth.png', './world_maker/data/smooth_sobel_watermap.png')
     time_smooth_terrain = time.time() - start_time
     print(f"[TIME] Smooth terrain {time_smooth_terrain}")
 
+    """
     start_time = time.time()
     set_roads(skeleton_highway, origin)
     set_roads(skeleton_mountain, origin)
@@ -108,28 +109,44 @@ def main():
 
     time_buildings = time.time() - start_time
     print(f"[TIME] Buildings {time_buildings}")
+    """
+    blocks = {
+        "wall": "blackstone",
+        "roof": "blackstone",
+        "roof_slab": "blackstone_slab",
+        "door": "oak_door",
+        "window": "glass_pane",
+        "entrance": "oak_door",
+        "stairs": "quartz_stairs",
+        "stairs_slab": "quartz_slab",
+        "celling": "quartz_block",
+        "floor": "quartz_block",
+        "celling_slab": "quartz_slab",
+        "garden_outline": "oak_leaves",
+        "garden_floor": "grass_block"
+    }
+
+    entranceDirection = ["N", "S", "E", "W"]
+    # TODO Enlever au dessus
 
     start_time = time.time()
     for buildings in rectangle_house_mountain:
-        start = (buildings[0][0] + origin[0], buildings[0]
-                 [1], buildings[0][2] + origin[1])
-        end = (buildings[1][0] + origin[0], buildings[1]
-               [1], buildings[1][2] + origin[1])
-        house = House(editor, start, end,
-                      entranceDirection[random.randint(0, 3)], blocks)
+        start = (buildings[0][0] + origin[0], buildings[0][1], buildings[0][2] + origin[1])
+        end   = (buildings[1][0] + origin[0], buildings[1][1], buildings[1][2] + origin[1])
+        house = House(editor, start, end,entranceDirection[random.randint(0, 3)], blocks)
         house.build()
     time_houses = time.time() - start_time
-    print(f"[TIME] Houses {time_houses}") """
+    print(f"[TIME] Houses {time_houses}")
 
     print("[GDMC] Done!\n\n")
 
     print(f"[TIME] Total {time.time() - start_time_all}")
     print(f"[TIME] World_maker {time_world_maker}")
     print(f"[TIME] Remove tree {time_remove_tree}")
-    #print(f"[TIME] Smooth terrain {time_smooth_terrain}")
+    print(f"[TIME] Smooth terrain {time_smooth_terrain}")
     #print(f"[TIME] Roads {time_roads}")
     #print(f"[TIME] Buildings {time_buildings}")
-    #print(f"[TIME] Houses {time_houses}")
+    print(f"[TIME] Houses {time_houses}")
 
 
 def get_height_building_from_center(center, position, length_world):

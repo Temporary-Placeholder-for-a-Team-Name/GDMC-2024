@@ -4,7 +4,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-from pyxtension.streams import stream
+import itertools as it
 
 
 class House:
@@ -151,33 +151,30 @@ class House:
             else:
                 print("Failed to place rectangle after 100000 attempts.")
 
-    def delete(self):
-        geometry.placeCuboid(self.editor, self.coordinates_min,
+    def delete(self) :
+        geometry.placeCuboid(self.editor, self.coordinates_min, 
                              self.coordinates_max, Block("air"))
 
-    def putWallOnSkeleton(self):
-        for k in range(len(self.skeleton)):
+    def putWallOnSkeleton(self) :
+        for k in range(len(self.skeleton)) :
             x, z, width, depth, height = self.skeleton[k]
 
-            if k != 0:
+            if k > 0 :
                 x += 1
                 z += 1
                 width -= 2
                 depth -= 2
             x_plan3d = x - self.coordinates_min[0]
             z_plan3d = z - self.coordinates_min[2]
-            for i in range(-1, width + 1):
-                for j in range(-1, depth + 1):
-                    for y in range(0, height):
-                        if i == -1 or i == width or j == -1 or j == depth:
-                            if not (self.grid3d[x_plan3d + i, y, z_plan3d + j]['bool']) and not (
-                                    self.grid3d[x_plan3d + i, y, z_plan3d + j]['int'] == 1) or (
-                                    self.grid3d[x_plan3d + i, y, z_plan3d + j]['bool'] and
-                                    self.grid3d[x_plan3d + i, y, z_plan3d + j]['int'] == 2) or y == 0:
-                                self.editor.placeBlock(
-                                    (x + i, self.coordinates_min[1] + y, z + j), self.wall)
-                                self.grid3d[x_plan3d + i,
-                                            y, z_plan3d + j] = True
+            for i, j, y in it.product(range(-1, width + 1), range(-1, depth + 1), range(height)) :
+                if i == -1 or i == width or j == -1 or j == depth and \
+                        (not (self.grid3d[x_plan3d + i, y, z_plan3d + j]['bool']) and 
+                         not (self.grid3d[x_plan3d + i, y, z_plan3d + j]['int'] == 1) or
+                        (self.grid3d[x_plan3d + i, y, z_plan3d + j]['bool'] and
+                         self.grid3d[x_plan3d + i, y, z_plan3d + j]['int'] == 2) or 
+                        y == 0) :
+                    self.editor.placeBlock((x + i, self.coordinates_min[1] + y, z + j), self.wall)
+                    self.grid3d[x_plan3d + i, y, z_plan3d + j] = True
 
     def getAdjacentWalls(self):
 
@@ -699,19 +696,17 @@ class House:
 
             QUARTZ_SLAB = Block(self.blocks["celling_slab"], {"type": "top"})
 
-            for i in range(-2, width + 2):
-                for j in range(-2, depth + 2):
-                    if i == -2 or i == width + 1 or j == -2 or j == depth + 1:
+            for i in range(-2, width + 2) :
+                for j in range(-2, depth + 2) :
+                    if i == -2 or i == width + 1 or j == -2 or j == depth + 1 :
                         if not self.grid3d[x_plan3d + i, height - 1, z_plan3d + j]['bool']:
                             if width < depth:
-                                if i == -2 or i == width + 1:
-                                    self.editor.placeBlock(
-                                        (x + i, self.coordinates_max[1] - 1, z + j), QUARTZ_SLAB)
+                                if i == -2 or i == width + 1 :
+                                    self.editor.placeBlock((x + i, self.coordinates_max[1] - 1, z + j), QUARTZ_SLAB)
 
-                            else:
+                            else :
                                 if j == -2 or j == depth + 1:
-                                    self.editor.placeBlock(
-                                        (x + i, self.coordinates_max[1] - 1, z + j), QUARTZ_SLAB)
+                                    self.editor.placeBlock((x + i, self.coordinates_max[1] - 1, z + j), QUARTZ_SLAB)
 
     def putCelling(self):
         for k in range(0, len(self.skeleton)):
@@ -727,8 +722,7 @@ class House:
             for y in range(1, self.nbEtage + 1):
                 for i in range(0, width):
                     for j in range(0, depth):
-                        self.editor.placeBlock(
-                            (x + i, self.coordinates_min[1] + 4 * y, z + j), self.celling)
+                        self.editor.placeBlock((x + i, self.coordinates_min[1] + 4 * y, z + j), self.celling)
                         self.grid3d[x_plan3d + i, 4 * y, z_plan3d + j] = True
 
     def getAllExterneWalls(self):
