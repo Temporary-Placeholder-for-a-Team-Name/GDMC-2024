@@ -8,6 +8,8 @@ from skimage import morphology
 
 from world_maker.data_analysis import handle_import_image
 
+from itertools import product
+
 
 def remove_trees(heightmap: Union[str, Image], treesmap: Union[str, Image], mask: Union[str, Image]):
     print("[Remove tree] Starting...")
@@ -26,7 +28,7 @@ def remove_trees(heightmap: Union[str, Image], treesmap: Union[str, Image], mask
 
     removed_treesmap = img.new("L", distance, 0)
 
-    for (x,z) in [(x,z) for x in range(distance[0]) for z in range(distance[1])] :
+    for (x, z) in product(range(distance[0]), range(distance[1])) :
 
         if mask.getpixel((x, z)) != 0 and treesmap.getpixel((x, z)) > 0 :
 
