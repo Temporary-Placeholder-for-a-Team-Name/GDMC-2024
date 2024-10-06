@@ -3,7 +3,7 @@ from math import exp, sqrt
 
 from gdpc import Editor, Block, geometry, Transform
 
-from House import *
+from house.house import House
 from networks.geometry.Point3D import Point3D
 from networks.roads_2.Road import Road
 from world_maker.data_analysis import transpose_form_heightmap
