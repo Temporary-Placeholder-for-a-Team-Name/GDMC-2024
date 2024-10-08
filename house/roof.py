@@ -1,8 +1,6 @@
 import math
 from gdpc import Block
 
-
-
 def calcul_height_roof(length):
     if length <= 5:
         n = 1

@@ -1,6 +1,5 @@
 from gdpc import Editor, Block, geometry
 import numpy as np
-from matplotlib.pyplot import stairs
 
 from garden import Garden
 from stairs import Stairs
@@ -31,16 +30,6 @@ def generate_new_length_component(length_component):
     else:
         new_width = np.random.randint(length_component - 2, 5)
     return new_width
-
-
-def is_inside_all(big_wall, small_wall):
-    x1, z1, x2, z2 = big_wall
-    x3, z3, x4, z4 = small_wall
-    if x1 == x2 == x3 == x4:
-        return x1 == x3 and z1 <= z3 and z4 <= z2
-    elif z1 == z2 == z3 == z4:
-        return z1 == z3 and x1 <= x3 and x4 <= x2
-
 
 class House:
     def __init__(self, editor, coordinates_min, coordinates_max, direction, list_block):
@@ -166,36 +155,6 @@ class House:
         geometry.placeCuboid(self.editor, self.coordinates_min,
                              self.coordinates_max, Block("air"))
 
-    def get_adjacent_walls(self):
-
-        main_rect = self.skeleton[0]
-        x_main, z_main, width_main, depth_main, heigt_main = main_rect
-        adjacent_walls = []
-        width_main -= 1
-        depth_main -= 1
-
-        for k in range(1, len(self.skeleton)):
-            x, z, width, depth, heigt = self.skeleton[k]
-
-            walls = [(x, z, x + width - 1, z), (x, z, x, z + depth - 1),
-                     (x, z + depth - 1, x + width - 1, z + depth - 1), (x + width - 1, z, x + width - 1, z + depth - 1)]
-            for wall in walls:
-                x1, z1, x2, z2 = wall
-                if (x_main <= x1 <= x_main + width_main or x_main <= x2 <= x_main + width_main) and (
-                        z_main - 1 == z1 or z_main + depth_main + 1 == z1):
-                    x1 = max(x1, x_main - 1)
-                    x2 = min(x2, x_main + width_main + 1)
-                    if abs(x2 - x1) > 1:
-                        adjacent_walls.append((x1, z1, x2, z2))
-                elif (z_main <= z1 <= z_main + depth_main or z_main <= z2 <= z_main + depth_main) and (
-                        x_main - 1 == x1 or x_main + width_main + 1 == x1):
-                    z1 = max(z1, z_main - 1)
-                    z2 = min(z2, z_main + depth_main + 1)
-                    if abs(z2 - z1) > 1:
-                        adjacent_walls.append((x1, z1, x2, z2))
-
-        return adjacent_walls
-
 
     def put_celling(self):
         for k in range(0, len(self.skeleton)):
@@ -214,40 +173,14 @@ class House:
                         self.editor.placeBlock((x + i, self.coordinates_min[1] + 4 * y, z + j), self.celling)
                         self.grid3d[x_plan3d + i, 4 * y, z_plan3d + j] = True
 
-    def get_all_extern_walls(self):
-        walls = []
-        adjacent_walls = self.get_adjacent_walls()
-        for k in range(0, len(self.skeleton)):
-            x, z, width, depth, height = self.skeleton[k]
-            if k == 0:
-                x -= 1
-                z -= 1
-                width += 2
-                depth += 2
 
-            walls.append((x, z, x + width - 1, z))
-            walls.append((x, z, x, z + depth - 1))
-            walls.append((x, z + depth - 1, x + width - 1, z + depth - 1))
-            walls.append((x + width - 1, z, x + width - 1, z + depth - 1))
-
-        walls_to_keep = []
-        for wall in walls:
-            remove_wall = False
-            for adj_wall in adjacent_walls:
-                if is_inside_all(wall, adj_wall):
-                    remove_wall = True
-                    break
-            if not remove_wall:
-                walls_to_keep.append(wall)
-
-        return walls_to_keep
 
     def build(self):
         self.create_house_skeleton()
         wall = Wall(self.editor, self.grid3d, self.coordinates_min, self.skeleton, self.wall, self.direction)
         wall.put_wall_on_skeleton()
 
-        door = Door(self.editor, self.coordinates_min, self.coordinates_max, self.direction, self.blocks, self.nbEtage, self.get_adjacent_walls(), self.skeleton)
+        door = Door(self.editor, self.coordinates_min, self.coordinates_max, self.direction, self.nbEtage, wall, self.skeleton)
         door.place_door()
         entrance_co = door.place_entrance()
 
@@ -256,7 +189,7 @@ class House:
 
         self.put_celling()
 
-        windows = Windows(self.get_all_extern_walls(), self.editor, self.coordinates_min, self.nbEtage, self.window)
+        windows = Windows(wall.get_all_extern_walls(), self.editor, self.coordinates_min, self.nbEtage, self.window)
         windows.place_windows()
 
         garden = Garden(self.editor, self.coordinates_min, self.coordinates_max, self.direction, entrance_co, self.gardenOutline, self.garden_floor)
